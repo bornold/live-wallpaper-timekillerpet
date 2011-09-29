@@ -1,18 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-      package="chal.dat255.tkp"
-      android:versionCode="1"
-      android:versionName="1.0">
-    <uses-sdk android:minSdkVersion="7" />
+	package="chal.dat255.tkp" android:versionCode="1" android:versionName="20110930">
+	
+	<uses-sdk android:minSdkVersion="7" />
+	
+	<uses-feature android:name="android.software.live_wallpaper" />
+	<uses-permission android:name="android.permission.BIND_WALLPAPER"></uses-permission>
+	
+	<application android:icon="@drawable/icon" 
+	android:label="@string/app_name" 
+	android:permission="android.permission.BIND_WALLPAPER">
+			<service android:label="@string/app_name"
+			android:icon="@drawable/icon" android:name=".TimeKillerPet">
 
-    <application android:icon="@drawable/icon" android:label="@string/app_name">
-        <activity android:name=".tkpActivity"
-                  android:label="@string/app_name">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+			<intent-filter>
+				<action android:name="android.service.wallpaper.WallpaperService" />
+			</intent-filter>
+			<meta-data android:name="android.service.wallpaper"
+				android:resource="@xml/timekillerpet" />
 
-    </application>
+		</service>
+
+	</application>
 </manifest>
