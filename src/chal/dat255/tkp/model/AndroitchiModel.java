@@ -40,9 +40,9 @@ public class AndroitchiModel {
 		//resource must be set before setState.
 		this.resource = resource;
 		//Starting position must be set before state.
-		setCoordinateRectangle(40, 240);
+		setCoordinateRectangle(40, 280);
 		
-		setState(AState.Normal);
+		setState(AState.Egg);
 		
 
 	}
@@ -85,7 +85,17 @@ public class AndroitchiModel {
     		lastUpdateTimer = gameTime;
     		//TODO Movement, this is example temp movement. must find out how to get screen res to be able to pan
     		if (currentState.equals(AState.Normal)) {
-        		setCoordinateRectangle(mPossRect.left+1, mPossRect.top);
+    			int n = 0;
+    			int m = 0;
+    			if (gameTime % 10 == 5) {m=2;} 
+    			else if (gameTime % 10 == 1) {m=1;}
+    			else if (gameTime % 10 == 2) {m=1; n=-1;}
+    			else if (gameTime % 10 == 3) {m=-3;}
+    			else if (gameTime % 10 == 4) {m=-1;}
+    			else if (gameTime % 10 == 6) {m=-1; n=1;}
+    			else if (gameTime % 10 == 7) {n=1;}
+    			else if (gameTime % 10 == 8) {n=-1;}
+        		setCoordinateRectangle(mPossRect.left+n, mPossRect.top+m);
     		}
         }
 	}
