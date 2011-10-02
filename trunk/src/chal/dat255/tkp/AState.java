@@ -1,7 +1,7 @@
 package chal.dat255.tkp;
 
 public enum AState {
-	Egg (0,0,0,0), 
+	Egg (R.drawable.egg, 48, 60, 1), 
 	Normal (R.drawable.normal, 22, 24, 7), 
 	Hungry (0,0,0,0),
 	VeryHungry (0,0,0,0), 
