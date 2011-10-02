@@ -1,9 +1,11 @@
 package chal.dat255.tkp;
 
+import chal.dat255.tkp.model.AndroitchiModel;
 import chal.dat255.tkp.view.AndroitchiSpriteView;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Rect;
 import android.os.Handler;
 import android.service.wallpaper.WallpaperService;
 import android.view.MotionEvent;
@@ -28,35 +30,34 @@ public class TimeKillerPet extends WallpaperService {
 	}
 
 	class TKPEngine extends Engine {
-		//cordinats for latest touch
-		private float touchX = 10;
-		private float touchY = 20;
-
-		//timer
-		private long mTimer;
 		
-		//fps
-		final private int fps = 10;
+
+		
+		//cordinats for latest touch
+		private float touchX = -1;
+		private float touchY = -1;
 
 		//visible boolean
 		boolean mVisible = false;
 		
-		//Sprite class
-		AndroitchiSpriteView animation;
+		//model object
+		private AndroitchiModel model;
+
+		//animation
+		AndroitchiSpriteView anim;
 		
 		// handler for message queue
 		private final Handler mHandler = new Handler();
 
 		private final Runnable mDrawPattern = new Runnable() {
 				public void run() {
-					mTimer = System.currentTimeMillis();
+					model.update(System.currentTimeMillis());
 					draw();
 				}
 		};
 		
 		public TKPEngine() {
-			animation = new AndroitchiSpriteView();
-			animation.initialize(BitmapFactory.decodeResource(getResources(), R.drawable.mascot), 120, 129, fps, 4 );
+			model = new AndroitchiModel(getResources());
 		}
 
 		@Override
@@ -94,6 +95,7 @@ public class TimeKillerPet extends WallpaperService {
 			if (event.getAction() == MotionEvent.ACTION_DOWN) {
 				touchX = event.getX();
 				touchY = event.getY();
+				model.isTouched((int)touchX, (int)touchY);
 			} 
 			super.onTouchEvent(event);
 		}
@@ -105,8 +107,8 @@ public class TimeKillerPet extends WallpaperService {
 				c = holder.lockCanvas();
 				if (c != null) {
 					c.drawColor(Color.WHITE);
-					animation.update(mTimer);
-					animation.draw(c, (int)touchX, (int)touchY);
+					model.draw(c);
+
 				}
 			} finally {
 				if (c != null)
@@ -114,7 +116,7 @@ public class TimeKillerPet extends WallpaperService {
 			}
 			mHandler.removeCallbacks(mDrawPattern);
 			if (mVisible) {
-				mHandler.postDelayed(mDrawPattern, fps / 1000 );
+				mHandler.postDelayed(mDrawPattern, Varibles.fps / 1000 );
 			}
 
 		}
