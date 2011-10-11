@@ -1,4 +1,7 @@
-package chal.dat255.tkp;
+package chal.dat255.tkp.model;
+
+import chal.dat255.tkp.R;
+import chal.dat255.tkp.R.drawable;
 
 public enum AState {
 	Egg (R.drawable.egg, 48, 60, 1), 
@@ -6,6 +9,7 @@ public enum AState {
 	Hungry (R.drawable.normal, 22, 24, 7),
 	VeryHungry (0,0,0,0), 
 	Thinking (R.drawable.bubble, 32, 30, 2);
+	
 
 	public final int bitmap;
 	public final int height;
