@@ -4,6 +4,7 @@ import chal.dat255.tkp.Varibles;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Rect;
+import android.graphics.RectF;
 /**
  * Thanks to Stephen Flockton, Toxic Tower Studios
  * for providing a guide on sprites without xml use!
@@ -11,7 +12,7 @@ import android.graphics.Rect;
  * @author Jonas Bornold
  *
  */
-public class AndroitchiSpriteView {
+public class TKPSpriteView {
 	/**
 	 * mAnimation is the variable which will hold the actual bitmap containing the animation.
 	 */
@@ -50,7 +51,7 @@ public class AndroitchiSpriteView {
     /**
      * Constructor default value, use initialize
      */
-    public AndroitchiSpriteView() {
+    public TKPSpriteView() {
         spriteRectangle = new Rect(0,0,0,0);
         mFrameTimer = 0;
         mCurrentFrame = 0;
@@ -73,7 +74,6 @@ public class AndroitchiSpriteView {
         spriteRectangle.bottom = mSpriteHeight;
         spriteRectangle.left = 0;
         spriteRectangle.right = mSpriteWidth;
-        mFPS = 1000 / Varibles.fps;
         mNoOfFrames = theFrameCount;
     }
     /**
@@ -84,7 +84,7 @@ public class AndroitchiSpriteView {
         //If the Game time variable is greater than the frametimer 
         //+ the FPS then what that means is that the amount of time FPS is set to
         //has elapsed and which case is time to change frames.
-    	if(gameTime > mFrameTimer + mFPS ) {
+    	if(gameTime > mFrameTimer + Varibles.updateIntervallMillis ) {
             mFrameTimer = gameTime;
             mCurrentFrame +=1;
             if(mCurrentFrame >= mNoOfFrames) {
@@ -106,7 +106,7 @@ public class AndroitchiSpriteView {
      * @param yPos Y position for the left corner
      */
     
-    public void draw(Canvas canvas, Rect poss) {
+    public void draw(Canvas canvas, RectF poss) {
         canvas.drawBitmap(mAnimation, spriteRectangle, poss, null);
     }
 }
