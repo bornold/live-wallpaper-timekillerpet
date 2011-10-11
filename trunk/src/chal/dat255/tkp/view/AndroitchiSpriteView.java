@@ -73,7 +73,7 @@ public class AndroitchiSpriteView {
         spriteRectangle.bottom = mSpriteHeight;
         spriteRectangle.left = 0;
         spriteRectangle.right = mSpriteWidth;
-        mFPS = 1000 /Varibles.fps;
+        mFPS = 1000 / Varibles.fps;
         mNoOfFrames = theFrameCount;
     }
     /**

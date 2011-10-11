@@ -11,7 +11,7 @@ import chal.dat255.tkp.view.AndroitchiSpriteView;
 /**
  * Model of androitchi, contains State and possition
  * 
- * @author jonas
+ * @author Jonas
  *
  */
 public class AndroitchiModel {
@@ -20,7 +20,7 @@ public class AndroitchiModel {
 	private Resources resource;
 	
 	//Current state
-	private AState currentState = AState.Normal;
+	private AState currentState = AState.Egg;
 	
 	//Sprite object
 	private AndroitchiSpriteView animation = new AndroitchiSpriteView();
@@ -34,17 +34,15 @@ public class AndroitchiModel {
     private long lastUpdateTimer;
     
 	/**
-	 * Public structor, must use.
+	 * Public constructor, must use.
 	 */
 	public AndroitchiModel(Resources resource) {
 		//resource must be set before setState.
 		this.resource = resource;
 		//Starting position must be set before state.
-		setCoordinateRectangle(40, 280);
+		setCoordinateRectangle(100, 280);
 		
 		setState(AState.Egg);
-		
-
 	}
 
 	/**
@@ -74,27 +72,46 @@ public class AndroitchiModel {
 	public void draw(Canvas c){
 		animation.draw(c, mPossRect);
 	}
+	public void offSetChange(int changeX){
+		if (mPossRect != null) {
+			setCoordinateRectangle(mPossRect.left + ((1 - changeX) / 2), mPossRect.top);
+		}
+		
+	}
+	
+	public void setMid(int xMid, int yMid) {
+		if (currentState != null) {
+			setCoordinateRectangle(xMid - (currentState.width/2), yMid - (currentState.height/2));
+			//setCoordinateRectangle(xMid, yMid);
+		}
+	}
 	
 	public void update(long gameTime) {
 		animation.update(gameTime);
-        //This is the code that does the checking.
-        //If the Game time variable is greater than the uppdatetimer 
-        //+ the FPS then what that means is that the amount of time FPS is set to
-        //has elapsed and which case is time to change frames.
+		
+		//Checks if any needs has gone up
+		for(Need n: Need.values()) {
+			if (gameTime > n.getLastUpdate() + n.getUpdateIntervall()){
+				int amount = (int)((gameTime - n.getLastUpdate()) / n.getUpdateIntervall());  //amount of cycles that past since last update
+				n.increaseNeedLevel(amount);
+			}
+		}
+		
+		//Random movement
     	if(gameTime > lastUpdateTimer + Varibles.fps ) {
     		lastUpdateTimer = gameTime;
     		//TODO Movement, this is example temp movement. must find out how to get screen res to be able to pan
     		if (currentState.equals(AState.Normal)) {
     			int n = 0;
     			int m = 0;
-    			if (gameTime % 10 == 5) {m=2;} 
-    			else if (gameTime % 10 == 1) {m=1;}
-    			else if (gameTime % 10 == 2) {m=1; n=-1;}
-    			else if (gameTime % 10 == 3) {m=-3;}
-    			else if (gameTime % 10 == 4) {m=-1;}
-    			else if (gameTime % 10 == 6) {m=-1; n=1;}
-    			else if (gameTime % 10 == 7) {n=1;}
-    			else if (gameTime % 10 == 8) {n=-1;}
+    			if (gameTime % 100 < 10) {m=1;}
+    			else if (gameTime % 100 < 20) {m=1; n=-1;}
+    			else if (gameTime % 100 < 30) {m=-1;}
+    			else if (gameTime % 100 < 40) {m=-1;}
+    			else if (gameTime % 100 < 60) {m=-1; n=1;}
+    			else if (gameTime % 100 < 70) {n=1;}
+    			else if (gameTime % 100 < 80) {n=-1;}
+    			else if (gameTime % 100 < 90) {n=-1;}
         		setCoordinateRectangle(mPossRect.left+n, mPossRect.top+m);
     		}
         }
