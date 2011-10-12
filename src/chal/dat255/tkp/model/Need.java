@@ -1,7 +1,9 @@
 package chal.dat255.tkp.model;
 
 public enum Need {
-	Hunger(Level.None, 0, 4*60*1000, System.currentTimeMillis() ); //4*60*1000 Four minutes //TODO , System.currentTimeMillis() should not be here...
+	//TODO , System.currentTimeMillis() should not be here...
+	Hunger(Level.None, 0, 4*60*1000, System.currentTimeMillis() ),
+	Sleep(Level.None, 0, 4*60*1000, System.currentTimeMillis() ); //4*60*1000 Four minutes 
 	
 	enum Level {
 		None, 
@@ -11,6 +13,7 @@ public enum Need {
 		Critical
 	}
 	
+
 	Level level = Level.None;
 	private int needLevel = 0;
 	private long lastUpdate;

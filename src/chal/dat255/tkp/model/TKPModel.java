@@ -6,6 +6,7 @@ import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import chal.dat255.tkp.Varibles;
+import chal.dat255.tkp.view.AState;
 import chal.dat255.tkp.view.TKPSpriteView;
 
 /**
@@ -14,6 +15,8 @@ import chal.dat255.tkp.view.TKPSpriteView;
  * @author Jonas
  * 
  */
+
+//TODO Find total screen size and set it to TPKMovementModel
 public class TKPModel {
 
 	// Screen Offsets
@@ -33,7 +36,7 @@ public class TKPModel {
 	private TKPSpriteView animation = new TKPSpriteView();
 
 	// possition of the androitchi
-	private RectF mPossRect;
+	private TPKMovementModel possition = new TPKMovementModel();
 
 	/**
 	 * lastUpdateTimer controls how long between updates.
@@ -46,27 +49,52 @@ public class TKPModel {
 	public TKPModel(Resources resource) {
 		// resource must be set before setState.
 		this.resource = resource;
-		// Starting position must be set before state.
-		moveSprite(mCenterX, mCenterY);
+		
 		setState(AState.Egg);
+		possition.setXYPossition(mCenterX, mCenterY);
+		
 	}
 
 	/**
 	 * If the touch is on sprite, change state
 	 */
 	public void isTouched(int x, int y) {
-		if ((mPossRect.contains(x, y))) {
+		if ((possition.getmPossRect().contains(x, y))) {
 			switch (currentState) {
 			case Egg:
-				setState(AState.Normal);
+				setState(AState.Jump);
 				break;
 
-			case Normal:
-				setState(AState.Thinking);
+			case Jump:
+				setState(AState.WalkLeft);
 				break;
 
-			case Thinking:
-				setState(AState.Normal);
+			case WalkLeft:
+				setState(AState.WalkRight);
+				break;
+				
+			case WalkRight:
+				setState(AState.WalkBack);
+				break;
+
+			case WalkBack:
+				setState(AState.WalkForward);
+				break;
+
+			case WalkForward:
+				setState(AState.Toilet);
+				break;
+
+			case Toilet:
+				setState(AState.FallAsleep);
+				break;
+				
+			case FallAsleep:
+				setState(AState.Eat);
+				break;
+				
+			case Eat:
+				setState(AState.Egg);
 				break;
 
 			default:
@@ -76,16 +104,7 @@ public class TKPModel {
 	}
 
 	public void draw(Canvas c) {
-		animation.draw(c, mPossRect);
-	}
-
-
-	public void setMid(int xMid, int yMid) {
-		if (currentState != null) {
-			moveSprite(xMid - (currentState.width / 2), yMid
-					- (currentState.height / 2));
-			// setCoordinateRectangle(xMid, yMid);
-		}
+		animation.draw(c, possition.getmPossRect());
 	}
 
 	public void update(long gameTime) {
@@ -104,8 +123,7 @@ public class TKPModel {
 		// Random movement
 		if (gameTime > lastUpdateTimer + Varibles.fps) {
 			lastUpdateTimer = gameTime;
-			// TODO Movement, this is example temp movement. must find out how
-			// TODO Movementpattern for each sprite.
+			possition.updatePossition();
 	
 		}
 	}
@@ -118,11 +136,12 @@ public class TKPModel {
 		mYStep = yStep;
 		mXPixels = xPixels;
 		mYPixels = yPixels;
-//		moveSprite(mXPixels, mYPixels); //TODO this pan, find out more...
+		possition.setXYPossition(mXPixels, mYPixels);
 		}
 
 	private void setState(AState s) {
 		currentState = s;
+		possition.setState(s);
 		setAnimation();
 	}
 
@@ -133,14 +152,9 @@ public class TKPModel {
 				currentState.frameCount);
 	}
 
-	private void moveSprite(float x, float y) {
-		this.mPossRect = new RectF(x, y, x + currentState.width, y
-				+ currentState.height);
-	}
-
 	public void onSurfaceChanged(float midX, float midY) {
 		if(mCenterX == 0 && mCenterY == 0) {
-			moveSprite(midX, midY);
+			possition.setXYPossition(midX, midY);
 		}
 		mCenterX = midX;
 		mCenterY = midY;
