@@ -11,11 +11,16 @@ public final class R {
     public static final class attr {
     }
     public static final class drawable {
-        public static final int bubble=0x7f020000;
-        public static final int egg=0x7f020001;
-        public static final int icon=0x7f020002;
-        public static final int mascot=0x7f020003;
-        public static final int normal=0x7f020004;
+        public static final int back=0x7f020000;
+        public static final int eat=0x7f020001;
+        public static final int egg=0x7f020002;
+        public static final int fallsleep=0x7f020003;
+        public static final int forward=0x7f020004;
+        public static final int icon=0x7f020005;
+        public static final int jump=0x7f020006;
+        public static final int left=0x7f020007;
+        public static final int right=0x7f020008;
+        public static final int toilet=0x7f020009;
     }
     public static final class string {
         public static final int app_name=0x7f040000;
