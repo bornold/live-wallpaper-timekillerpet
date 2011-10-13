@@ -1,6 +1,6 @@
 package chal.dat255.tkp.model;
 
-public enum Need {
+public enum TKPNeedModel {
 	//TODO , System.currentTimeMillis() should not be here...
 	Hunger(Level.None, 0, 4*60*1000, System.currentTimeMillis() ),
 	Sleep(Level.None, 0, 4*60*1000, System.currentTimeMillis() ); //4*60*1000 Four minutes 
@@ -12,14 +12,13 @@ public enum Need {
 		Very,
 		Critical
 	}
-	
 
 	Level level = Level.None;
 	private int needLevel = 0;
 	private long lastUpdate;
 	private long updateIntervall;
 	
-	Need(Level level, int needLevel, long updateInterall, long lastUpdate) {
+	TKPNeedModel(Level level, int needLevel, long updateInterall, long lastUpdate) {
 		this.level=level;
 		this.needLevel = needLevel;
 		this.updateIntervall = updateInterall;
