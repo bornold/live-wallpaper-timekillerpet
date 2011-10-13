@@ -16,15 +16,14 @@ import chal.dat255.tkp.view.TKPSpriteView;
  * 
  */
 
-//TODO Find total screen size and set it to TPKMovementModel
 public class TKPModel {
 
 	// Screen Offsets
 	private float mXOffset = 0, mYOffset = 0, mXStep = 0, mYStep = 0,
 			mXPixels = 0, mYPixels = 0;
-	// Screen middle
-	private float mCenterX = 0;
-	private float mCenterY = 0;
+	// Screen size
+	private int width = 0;
+	private int height = 0;
 
 	// The Resources
 	private Resources resource;
@@ -38,9 +37,7 @@ public class TKPModel {
 	// possition of the androitchi
 	private TPKMovementModel possition = new TPKMovementModel();
 
-	/**
-	 * lastUpdateTimer controls how long between updates.
-	 */
+	// lastUpdateTimer controls how long between updates.
 	private long lastUpdateTimer;
 
 	/**
@@ -51,7 +48,7 @@ public class TKPModel {
 		this.resource = resource;
 		
 		setState(AState.Egg);
-		possition.setXYPossition(mCenterX, mCenterY);
+		possition.setXYPossition(width/2.0f, height/2.0f);
 		
 	}
 
@@ -66,6 +63,18 @@ public class TKPModel {
 				break;
 
 			case Jump:
+				setState(AState.Toilet);
+				break;
+				
+			case Toilet:
+				setState(AState.FallAsleep);
+				break;
+				
+			case FallAsleep:
+				setState(AState.Eat);
+				break;
+				
+			case Eat:
 				setState(AState.WalkLeft);
 				break;
 
@@ -78,23 +87,11 @@ public class TKPModel {
 				break;
 
 			case WalkBack:
-				setState(AState.WalkForward);
+				setState(AState.WalkForward); 
 				break;
 
 			case WalkForward:
-				setState(AState.Toilet);
-				break;
-
-			case Toilet:
-				setState(AState.FallAsleep);
-				break;
-				
-			case FallAsleep:
-				setState(AState.Eat);
-				break;
-				
-			case Eat:
-				setState(AState.Egg);
+				setState(AState.WalkLeft);
 				break;
 
 			default:
@@ -113,17 +110,20 @@ public class TKPModel {
 		// Checks if any needs has gone up
 		for (Need n : Need.values()) {
 			if (gameTime > n.getLastUpdate() + n.getUpdateIntervall()) {
-				int amount = (int) ((gameTime - n.getLastUpdate()) / n
-						.getUpdateIntervall()); // amount of cycles that past
+				int amount = (int) ((gameTime - n.getLastUpdate()) / n.getUpdateIntervall()); // amount of cycles that past
 												// since last update
 				n.increaseNeedLevel(amount);
 			}
 		}
 
-		// Random movement
+		//TODO Update movement
+		// movement
 		if (gameTime > lastUpdateTimer + Varibles.fps) {
 			lastUpdateTimer = gameTime;
-			possition.updatePossition();
+			AState tempState = possition.updatePossition();
+			if (tempState != null) {
+				setState(tempState);
+			}
 	
 		}
 	}
@@ -136,7 +136,7 @@ public class TKPModel {
 		mYStep = yStep;
 		mXPixels = xPixels;
 		mYPixels = yPixels;
-		possition.setXYPossition(mXPixels, mYPixels);
+		possition.changeXPossition(mXPixels, mXStep); //TODO Panning working, but bugs when tkp moving towards movement direction
 		}
 
 	private void setState(AState s) {
@@ -152,11 +152,10 @@ public class TKPModel {
 				currentState.frameCount);
 	}
 
-	public void onSurfaceChanged(float midX, float midY) {
-		if(mCenterX == 0 && mCenterY == 0) {
-			possition.setXYPossition(midX, midY);
-		}
-		mCenterX = midX;
-		mCenterY = midY;
+	public void setSurfaceSize(int width, int height) {
+		this.width = (int) (width*mXStep);
+		this.height = (int) (height*mYStep);
+		possition.setSurfaceSize(width, height);
+		
 	}
 }

@@ -84,7 +84,7 @@ public class TimeKillerPetEngine extends WallpaperService {
 		public void onSurfaceChanged(SurfaceHolder holder, int format,
 				int width, int height) {
 			super.onSurfaceChanged(holder, format, width, height);
-			model.onSurfaceChanged(width/2.0f, height/2.0f);
+			model.setSurfaceSize(width, height);
 			draw();
 		}
 
