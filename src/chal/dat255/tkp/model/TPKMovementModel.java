@@ -1,6 +1,6 @@
 package chal.dat255.tkp.model;
 
-import chal.dat255.tkp.view.AState;
+import chal.dat255.tkp.view.TKPState;
 import android.graphics.RectF;
 
 public class TPKMovementModel {
@@ -12,7 +12,7 @@ public class TPKMovementModel {
 	private int height;
 	
 	//current state
-	private AState state;
+	private TKPState state;
 
 	public TPKMovementModel() {
 		mPossRect = new RectF();
@@ -26,7 +26,7 @@ public class TPKMovementModel {
 		this.mPossRect = mPossRect;
 	}
 
-	public void setState(AState s) {
+	public void setState(TKPState s) {
 		this.state = s;		
 	}
 
@@ -65,7 +65,7 @@ public class TPKMovementModel {
 		
 	}
 
-	public AState updatePossition() {
+	public TKPState updatePossition() {
 		switch (state) {
 		case Egg:
 			
@@ -91,7 +91,7 @@ public class TPKMovementModel {
 			if(mPossRect.top > 0) {
 				setYPossition(mPossRect.top-5);
 			} else {
-				return AState.WalkForward;
+				return TKPState.WalkForward;
 			}
 				
 			break;
@@ -100,7 +100,7 @@ public class TPKMovementModel {
 		    if(mPossRect.bottom < height) {
 				setYPossition(mPossRect.top+5);
 			} else {
-				return AState.WalkBack;
+				return TKPState.WalkBack;
 			}
 				
 			break;
@@ -109,7 +109,7 @@ public class TPKMovementModel {
 			if(mPossRect.left > 0) {
 				setXPossition(mPossRect.left-5);
 			} else {
-				return AState.WalkRight;
+				return TKPState.WalkRight;
 			}
 			break;
 
@@ -117,7 +117,7 @@ public class TPKMovementModel {
 			if(mPossRect.right < width ) {
 				setXPossition(mPossRect.left+5);
 			} else {
-				return AState.WalkLeft;
+				return TKPState.WalkLeft;
 			}
 			
 			break;

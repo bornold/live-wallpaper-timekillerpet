@@ -6,7 +6,7 @@ import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import chal.dat255.tkp.Varibles;
-import chal.dat255.tkp.view.AState;
+import chal.dat255.tkp.view.TKPState;
 import chal.dat255.tkp.view.TKPSpriteView;
 
 /**
@@ -29,7 +29,7 @@ public class TKPModel {
 	private Resources resource;
 
 	// Current state
-	private AState currentState = AState.Egg;
+	private TKPState currentState = TKPState.Egg;
 
 	// Sprite object
 	private TKPSpriteView animation = new TKPSpriteView();
@@ -47,7 +47,7 @@ public class TKPModel {
 		// resource must be set before setState.
 		this.resource = resource;
 		
-		setState(AState.Egg);
+		setState(TKPState.Egg);
 		possition.setXYPossition(width/2.0f, height/2.0f);
 		
 	}
@@ -59,39 +59,39 @@ public class TKPModel {
 		if ((possition.getmPossRect().contains(x, y))) {
 			switch (currentState) {
 			case Egg:
-				setState(AState.Jump);
+				setState(TKPState.Jump);
 				break;
 
 			case Jump:
-				setState(AState.Toilet);
+				setState(TKPState.Toilet);
 				break;
 				
 			case Toilet:
-				setState(AState.FallAsleep);
+				setState(TKPState.FallAsleep);
 				break;
 				
 			case FallAsleep:
-				setState(AState.Eat);
+				setState(TKPState.Eat);
 				break;
 				
 			case Eat:
-				setState(AState.WalkLeft);
+				setState(TKPState.WalkLeft);
 				break;
 
 			case WalkLeft:
-				setState(AState.WalkRight);
+				setState(TKPState.WalkRight);
 				break;
 				
 			case WalkRight:
-				setState(AState.WalkBack);
+				setState(TKPState.WalkBack);
 				break;
 
 			case WalkBack:
-				setState(AState.WalkForward); 
+				setState(TKPState.WalkForward); 
 				break;
 
 			case WalkForward:
-				setState(AState.WalkLeft);
+				setState(TKPState.WalkLeft);
 				break;
 
 			default:
@@ -108,7 +108,7 @@ public class TKPModel {
 		animation.update(gameTime);
 
 		// Checks if any needs has gone up
-		for (Need n : Need.values()) {
+		for (TKPNeedModel n : TKPNeedModel.values()) {
 			if (gameTime > n.getLastUpdate() + n.getUpdateIntervall()) {
 				int amount = (int) ((gameTime - n.getLastUpdate()) / n.getUpdateIntervall()); // amount of cycles that past
 												// since last update
@@ -120,7 +120,7 @@ public class TKPModel {
 		// movement
 		if (gameTime > lastUpdateTimer + Varibles.fps) {
 			lastUpdateTimer = gameTime;
-			AState tempState = possition.updatePossition();
+			TKPState tempState = possition.updatePossition();
 			if (tempState != null) {
 				setState(tempState);
 			}
@@ -139,7 +139,7 @@ public class TKPModel {
 		possition.changeXPossition(mXPixels, mXStep); //TODO Panning working, but bugs when tkp moving towards movement direction
 		}
 
-	private void setState(AState s) {
+	private void setState(TKPState s) {
 		currentState = s;
 		possition.setState(s);
 		setAnimation();
