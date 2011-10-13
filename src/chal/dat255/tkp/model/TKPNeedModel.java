@@ -1,9 +1,9 @@
 package chal.dat255.tkp.model;
 
 public enum TKPNeedModel {
-	//TODO , System.currentTimeMillis() should not be here...
-	Hunger(Level.None, 0, 4*60*1000, System.currentTimeMillis() ),
-	Sleep(Level.None, 0, 4*60*1000, System.currentTimeMillis() ); //4*60*1000 Four minutes 
+	//TODO , System.currentTimeMillis() should not be here... Should use when egg is clicked, damn..
+	Hunger(Level.None, 0, 10000, System.currentTimeMillis() ),
+	Sleep(Level.None, 0, 10000, System.currentTimeMillis() ); //4*60*1000 Four minutes 
 	
 	enum Level {
 		None, 
