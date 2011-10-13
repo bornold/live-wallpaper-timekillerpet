@@ -7,6 +7,10 @@ public class TPKMovementModel {
 	// possition of the androitchi
 	private RectF mPossRect;
 	
+	//Screen size
+	private int width;
+	private int height;
+	
 	//current state
 	private AState state;
 
@@ -26,6 +30,8 @@ public class TPKMovementModel {
 		this.state = s;		
 	}
 
+	
+	//Set Possitions
 	public void setXYPossition(float mCenterX, float mCenterY) {
 		mPossRect.set(mCenterX, mCenterY, mCenterX + state.width, mCenterY + state.height);
 	}
@@ -35,8 +41,31 @@ public class TPKMovementModel {
 	public void setYPossition(float mCenterY) {
 		mPossRect.set(mPossRect.left, mCenterY, mPossRect.right, mCenterY + state.height);
 	}
+	
+	
+	//CHANGE possitions
+	public void changeXYPossition(float xChange, float yChange, float xStep, float yStep) {
+		float xChangeTot = xChange+width*xStep;
+		float yChangeTot = yChange+height*yStep;
+		mPossRect.set(xChangeTot, yChangeTot, xChangeTot+state.width, yChangeTot + state.height);
+	}
+	public void changeXPossition(float xChange, float xStep) {
+		float xChangeTot = xChange+width*xStep;
+		mPossRect.set(xChangeTot, mPossRect.top, xChangeTot+state.width, mPossRect.bottom);
+	}
+	public void changeYPossition(float yChange, float yStep) {
+		float yChangeTot = yChange+height*yStep;
+		mPossRect.set(mPossRect.left, yChangeTot, mPossRect.right, yChangeTot + state.height);
+	}
+	
+	
+	public void setSurfaceSize(int width, int height) {
+		this.width = width;
+		this.height = height;
+		
+	}
 
-	public void updatePossition() {
+	public AState updatePossition() {
 		switch (state) {
 		case Egg:
 			
@@ -59,23 +88,44 @@ public class TPKMovementModel {
 			break;
 
 		case WalkBack:
-			setYPossition(mPossRect.top-5);
+			if(mPossRect.top > 0) {
+				setYPossition(mPossRect.top-5);
+			} else {
+				return AState.WalkForward;
+			}
+				
 			break;
 
 		case WalkForward:
-			setYPossition(mPossRect.top+5);
+		    if(mPossRect.bottom < height) {
+				setYPossition(mPossRect.top+5);
+			} else {
+				return AState.WalkBack;
+			}
+				
 			break;
 
 		case WalkLeft:
-			setXPossition(mPossRect.left-5);
+			if(mPossRect.left > 0) {
+				setXPossition(mPossRect.left-5);
+			} else {
+				return AState.WalkRight;
+			}
 			break;
 
 		case WalkRight:
-			setXPossition(mPossRect.left+5);
+			if(mPossRect.right < width ) {
+				setXPossition(mPossRect.left+5);
+			} else {
+				return AState.WalkLeft;
+			}
+			
 			break;
 
 		default:
+			
 			break;
-		}		
+		}
+		return null;		
 	}
 }
