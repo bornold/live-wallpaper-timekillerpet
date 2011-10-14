@@ -1,5 +1,7 @@
 package chal.dat255.tkp.model;
-
+//////////////////////////////////////////////////////////
+/////////////////TODO FIX AS ABSTRACT CLASS!!////////////
+////////////////////////////////////////////////////////
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -7,11 +9,12 @@ import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import chal.dat255.tkp.R;
-import chal.dat255.tkp.model.SleepNeed.Level;
+import chal.dat255.tkp.model.SleepNeed.SLevel;
 
 public class FoodNeed {
+	private long updateIntervall = 4*100;//0*60; // 4 min
 	
-	public enum Level {
+	public enum FLevel {
 		None (R.drawable.cloudright1),
 		Normal (R.drawable.cloudright2),
 		More (R.drawable.cloudright3),
@@ -20,7 +23,7 @@ public class FoodNeed {
 		
 
 		public final int bitmap;
-		Level(int theBitmap) {
+		FLevel(int theBitmap) {
 			this.bitmap = theBitmap;
 		}
 	}
@@ -35,14 +38,13 @@ public class FoodNeed {
      */
     private Rect spriteRectangle = new Rect();
 
-	Level level = Level.None;
+	FLevel level = FLevel.None;
 	private int needLevel = 0;
 	private long lastUpdate = System.currentTimeMillis(); //should really be set when hatched...
-	private long updateIntervall = 4*60*1000; // 4 min
-	
+
 	public FoodNeed() {
 		needLevel = 0;
-		level = Level.None;
+		level = FLevel.None;
 		lastUpdate = System.currentTimeMillis();
 		spriteRectangle = new Rect();
 	}
@@ -68,7 +70,7 @@ public class FoodNeed {
 
 	public void decreaseNeedLevel(int amount) {
 		if (amount > 0) {
-			if ((amount - needLevel) > 0) {
+			if ((needLevel - amount) > 0) {
 				needLevel -= amount;
 			} else {
 				needLevel = 0;
@@ -79,6 +81,7 @@ public class FoodNeed {
 
 	public void resetNeedLevel() {
 		needLevel = 0;
+		checkNeedLevel();
 	}
 	
 	public long getLastUpdate() {
@@ -93,25 +96,25 @@ public class FoodNeed {
 		return updateIntervall;
 	}
 
-	public Level getLevel(){
+	public FLevel getLevel(){
 		return this.level;
 	}
 	
-	private void setLevel(Level level) {
+	private void setLevel(FLevel level) {
 		this.level = level;
 	}
 	
 	private void checkNeedLevel() {
 		if (needLevel > 80) {
-			setLevel(Level.Critical);
+			setLevel(FLevel.Critical);
 		} else if ( needLevel > 60 ) {
-			setLevel(Level.Very);
+			setLevel(FLevel.Very);
 		} else if ( needLevel > 40 ) {
-			setLevel(Level.More);
+			setLevel(FLevel.More);
 		}  else if ( needLevel > 20 ) {
-			setLevel(Level.Normal);
+			setLevel(FLevel.Normal);
 		}  else {
-			setLevel(Level.None);
+			setLevel(FLevel.None);
 		}
 	}
 	

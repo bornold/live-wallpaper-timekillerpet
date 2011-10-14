@@ -7,7 +7,6 @@ import chal.dat255.tkp.Varibles;
 import chal.dat255.tkp.view.TKPState;
 import chal.dat255.tkp.view.TKPSpriteView;
 
-
 /**
  * Model of androitchi, contains State and possition
  * 
@@ -16,10 +15,6 @@ import chal.dat255.tkp.view.TKPSpriteView;
  */
 
 public class TKPModel {
-
-	// Screen Offsets
-	private float mXOffset = 0, mYOffset = 0, mXStep = 0, mYStep = 0,
-			mXPixels = 0, mYPixels = 0;
 	// Screen size
 	private int width = 0;
 	private int height = 0;
@@ -34,7 +29,7 @@ public class TKPModel {
 	// Sprite object
 	private TKPSpriteView animation = new TKPSpriteView();
 
-	// Thougt bubble views
+	// Thougt bubble views /!/!/!/!//!/FIX AS ABSTRACT!!!!!/!/!/!/!//!
 	private FoodNeed foodTB = new FoodNeed();
 	private SleepNeed sleepTB = new SleepNeed();
 
@@ -43,6 +38,7 @@ public class TKPModel {
 
 	// lastUpdateTimer controls how long between updates.
 	private long lastUpdateTimer;
+	private int updateTicker = 0;
 
 	/**
 	 * Public constructor, must use.
@@ -73,11 +69,11 @@ public class TKPModel {
 				break;
 			}
 		} else if (currentState == TKPState.Thinking) {
-			if ((possition.getRightTBPoss().contains(x, y))) { 
+			if ((possition.getRightTBPoss().contains(x, y))) {
 				setState(TKPState.Eat);
-			} else if ((possition.getLeftTBPoss().contains(x, y))) { 
+			} else if ((possition.getLeftTBPoss().contains(x, y))) {
 				setState(TKPState.FallAsleep);
-			} else { 
+			} else {
 				setState(lastState);
 			}
 		} else {
@@ -105,11 +101,11 @@ public class TKPModel {
 			case Eat:
 				setState(TKPState.Jump);
 				break;
-				
+
 			case FallAsleep:
 				setState(TKPState.Jump);
 				break;
-				
+
 			default:
 				break;
 			}
@@ -119,8 +115,6 @@ public class TKPModel {
 	public void draw(Canvas c) {
 		animation.draw(c, possition.getmPossRect());
 		if (currentState == TKPState.Thinking) {
-//			foodThoughtBubble.draw(c, possition.getRightTBPoss());
-//			sleepThoughtBubble.draw(c, possition.getLeftTBPoss());
 			foodTB.draw(c, possition.getRightTBPoss());
 			sleepTB.draw(c, possition.getLeftTBPoss());
 		}
@@ -128,28 +122,61 @@ public class TKPModel {
 
 	public void update(long gameTime) {
 		animation.update(gameTime);
-
-
-		///////////////////////////////////////////////////////
-		if (gameTime > foodTB.getLastUpdate() + foodTB.getUpdateIntervall()) {
-			int amount = (int) ((gameTime - foodTB.getLastUpdate()) / foodTB
-					.getUpdateIntervall()); // amount of cycles that past
-			// since last update
-			foodTB.increaseNeedLevel(amount);
-			setTP();
-		}
-		if (gameTime > sleepTB.getLastUpdate() + sleepTB.getUpdateIntervall()) {
-			int amount = (int) ((gameTime - sleepTB.getLastUpdate()) / sleepTB
-					.getUpdateIntervall()); // amount of cycles that past
-			// since last update
-			sleepTB.increaseNeedLevel(amount);
-			setTP();
-		}
-		///////////////////////////////////////////////////////
-
-		// movement updater
-		if (gameTime > lastUpdateTimer + Varibles.fps) {
+		if (gameTime > lastUpdateTimer + Varibles.updateIntervallMillis) {
 			lastUpdateTimer = gameTime;
+
+			// /////// THIS IS UGLY!!!! FIX AS ABSTRACT!
+			if (currentState == TKPState.Eat) { // if eating
+				if (gameTime > (foodTB.getLastUpdate()
+						+ Varibles.updateIntervallMillis
+						* (TKPState.Eat.frameCount) + 1)) {
+					foodTB.decreaseNeedLevel(20);
+					foodTB.setLastUpdate(gameTime);
+					foodTB.setTB(resource);
+					setState(TKPState.Jump);
+
+				}
+			} else { // if not eating increase the hunger
+				if (gameTime > foodTB.getLastUpdate()
+						+ foodTB.getUpdateIntervall()) { // if not eating and
+															// time past since
+															// last update,
+															// increase hunger.
+					int amount = (int) ((gameTime - foodTB.getLastUpdate()) / foodTB
+							.getUpdateIntervall()); // amount of cycles that
+													// past since last update
+					foodTB.increaseNeedLevel(amount);
+					foodTB.setTB(resource);
+					foodTB.setLastUpdate(gameTime);
+				}
+			}
+			if (false) { // if sleeping decrease the sleepiness
+				
+			} else if (true) { // is not sleeping increase the sleepiness
+				if (gameTime > sleepTB.getLastUpdate()
+						+ sleepTB.getUpdateIntervall()) {
+					int amount = (int) ((gameTime - sleepTB.getLastUpdate()) / sleepTB
+							.getUpdateIntervall()); // amount of cycles that
+													// past
+					// since last update
+					sleepTB.increaseNeedLevel(amount);
+					sleepTB.setTB(resource);
+				}
+			}
+			if (currentState == TKPState.Jump) {
+				updateTicker++;
+				if (updateTicker == TKPState.Jump.frameCount){
+					updateTicker = 0;
+					setState(TKPState.WalkForward);
+				}
+			} else if (currentState == TKPState.FallAsleep) {
+				
+				
+			}
+			// ///////////////////////////////////////////////////////////////
+			// WARARWAW!
+
+			// movement updater
 			TKPState tempState = possition.updatePossition();
 			if (tempState != null) {
 				setState(tempState);
@@ -157,28 +184,11 @@ public class TKPModel {
 		}
 	}
 
-	
-
-
-	private void setTP() {
-		foodTB.setTB(resource);
-		sleepTB.setTB(resource);
-	}
-
-
-
+	// just push it forward to MovementModel
 	public void onOffsetsChanged(float xOffset, float yOffset, float xStep,
 			float yStep, int xPixels, int yPixels) {
-		mXOffset = xOffset;
-		mYOffset = yOffset;
-		mXStep = xStep;
-		mYStep = yStep;
-		mXPixels = xPixels;
-		mYPixels = yPixels;
-		possition.changeXPossition(mXPixels, mXStep); // TODO Panning working,
-														// but bugs when tkp
-														// moving towards
-														// movement direction
+		possition.onOffsetsChanged(xOffset, yOffset, xStep, yStep, xPixels,
+				yPixels);
 	}
 
 	private void setState(TKPState s) {

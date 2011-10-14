@@ -1,5 +1,7 @@
 package chal.dat255.tkp.model;
-
+//////////////////////////////////////////////////////////
+/////////////////TODO FIX AS ABSTRACT CLASS!!////////////
+////////////////////////////////////////////////////////
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -10,7 +12,7 @@ import chal.dat255.tkp.R;
 
 public class SleepNeed {
 	
-	public enum Level {
+	public enum SLevel {
 		None (R.drawable.cloudleft1),
 		Normal (R.drawable.cloudleft2),
 		More (R.drawable.cloudleft3),
@@ -18,7 +20,7 @@ public class SleepNeed {
 		Critical (R.drawable.cloudleft5);
 		
 		public final int bitmap;
-		Level(int theBitmap) {
+		SLevel(int theBitmap) {
 			this.bitmap = theBitmap;
 		}
 	}
@@ -33,7 +35,7 @@ public class SleepNeed {
      */
     private Rect spriteRectangle = new Rect();
 
-	Level level = Level.None;
+	SLevel level = SLevel.None;
 	private int needLevel = 0;
 	private long lastUpdate = System.currentTimeMillis(); //should really be set when hatched...
 	final private long updateIntervall = 4*60*1000; // 4 min
@@ -41,7 +43,7 @@ public class SleepNeed {
 	
 	public SleepNeed() {
 		needLevel = 0;
-		level = Level.None;
+		level = SLevel.None;
 		lastUpdate = System.currentTimeMillis();
 		spriteRectangle = new Rect();
 	}
@@ -77,7 +79,7 @@ public class SleepNeed {
 
 	public void decreaseNeedLevel(int amount) {
 		if (amount > 0) {
-			if ((amount - needLevel) > 0) {
+			if ((needLevel - amount) > 0) {
 				needLevel -= amount;
 			} else {
 				needLevel = 0;
@@ -88,6 +90,7 @@ public class SleepNeed {
 
 	public void resetNeedLevel() {
 		needLevel = 0;
+		checkNeedLevel();
 	}
 	
 	public long getLastUpdate() {
@@ -102,25 +105,25 @@ public class SleepNeed {
 		return updateIntervall;
 	}
 
-	public Level getLevel(){
+	public SLevel getLevel(){
 		return this.level;
 	}
 	
-	private void setLevel(Level level) {
+	private void setLevel(SLevel level) {
 		this.level = level;
 	}
 	
 	private void checkNeedLevel() {
 		if (needLevel > 80) {
-			setLevel(Level.Critical);
+			setLevel(SLevel.Critical);
 		} else if ( needLevel > 60 ) {
-			setLevel(Level.Very);
+			setLevel(SLevel.Very);
 		} else if ( needLevel > 40 ) {
-			setLevel(Level.More);
+			setLevel(SLevel.More);
 		}  else if ( needLevel > 20 ) {
-			setLevel(Level.Normal);
+			setLevel(SLevel.Normal);
 		}  else {
-			setLevel(Level.None);
+			setLevel(SLevel.None);
 		}
 	}
 	
