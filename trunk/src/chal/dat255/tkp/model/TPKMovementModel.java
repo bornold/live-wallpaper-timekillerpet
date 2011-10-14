@@ -1,7 +1,6 @@
 package chal.dat255.tkp.model;
 
 import chal.dat255.tkp.view.TKPState;
-import chal.dat255.tkp.view.ThoughBubbles;
 import android.graphics.RectF;
 
 public class TPKMovementModel {
@@ -144,9 +143,8 @@ public class TPKMovementModel {
 		return rightThougtBubble;
 	}
 	private void updateThoughtBubblesPoss() {
-//		rightThougtBubble = new RectF(mPossRect.right, mPossRect.top + ThoughBubbles.HungerNone.height, mPossRect.right + ThoughBubbles.HungerNone.width, mPossRect.top);
-		rightThougtBubble = new RectF(mPossRect.right, 0, width, mPossRect.top);
-		leftThougtBubble = new RectF(0, 0, mPossRect.left, mPossRect.top);
-//		leftThougtBubble = new RectF(mPossRect.left + ThoughBubbles.HungerNone.width, mPossRect.top + ThoughBubbles.HungerNone.height, mPossRect.left, mPossRect.top);
+		int offset = 40;
+		leftThougtBubble = new RectF(mPossRect.left-142+offset,  mPossRect.top-85+offset, mPossRect.left+offset, mPossRect.top+offset);
+		rightThougtBubble = new RectF(mPossRect.right-offset, mPossRect.top-85+offset, mPossRect.right+142-offset, mPossRect.top+offset);
 	}
 }
