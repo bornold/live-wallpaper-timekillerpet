@@ -11,7 +11,7 @@ import android.graphics.RectF;
 import chal.dat255.tkp.R;
 
 public class SleepNeed {
-	
+	final private long updateIntervall = 4*1000; // 4 min
 	public enum SLevel {
 		None (R.drawable.cloudleft1),
 		Normal (R.drawable.cloudleft2),
@@ -37,8 +37,8 @@ public class SleepNeed {
 
 	SLevel level = SLevel.None;
 	private int needLevel = 0;
+
 	private long lastUpdate = System.currentTimeMillis(); //should really be set when hatched...
-	final private long updateIntervall = 4*60*1000; // 4 min
 
 	
 	public SleepNeed() {
@@ -102,7 +102,7 @@ public class SleepNeed {
 	}
 
 	public long getUpdateIntervall() {
-		return updateIntervall;
+		return this.updateIntervall;
 	}
 
 	public SLevel getLevel(){
@@ -112,7 +112,9 @@ public class SleepNeed {
 	private void setLevel(SLevel level) {
 		this.level = level;
 	}
-	
+	public int getNeedLevel() {
+		return this.needLevel;
+	}
 	private void checkNeedLevel() {
 		if (needLevel > 80) {
 			setLevel(SLevel.Critical);
@@ -137,4 +139,3 @@ public class SleepNeed {
         canvas.drawBitmap(bitmap, spriteRectangle, poss, null);
     }
 }
-

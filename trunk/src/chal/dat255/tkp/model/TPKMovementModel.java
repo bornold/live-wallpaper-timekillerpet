@@ -88,28 +88,9 @@ public class TPKMovementModel {
 
 	public TKPState updatePossition() {
 		switch (state) {
-		case Egg:
-			
-			break;
-
-		case Eat:
-			
-			break;
-
-		case Jump:
-			
-			break;
-
-		case FallAsleep:
-			
-			break;
-
-		case Toilet:
-			
-			break;
 
 		case WalkBack:
-			if(mPossRect.top > 0) {
+			if(mPossRect.top > height/2) {
 				setYPossition(mPossRect.top-10);
 			} else {
 				return TKPState.WalkForward;

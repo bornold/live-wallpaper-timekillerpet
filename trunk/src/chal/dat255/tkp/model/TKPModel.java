@@ -8,16 +8,13 @@ import chal.dat255.tkp.view.TKPState;
 import chal.dat255.tkp.view.TKPSpriteView;
 
 /**
- * Model of androitchi, contains State and possition
+ * Model of androitchi, contains State and behaivor
  * 
  * @author Jonas
  * 
  */
 
 public class TKPModel {
-	// Screen size
-	private int width = 0;
-	private int height = 0;
 
 	// The Resources
 	private Resources resource;
@@ -48,7 +45,7 @@ public class TKPModel {
 		this.resource = resource;
 
 		setState(TKPState.Egg);
-		possition.setXYPossition(width, height);
+		possition.setXYPossition(120, 280);
 
 		foodTB.setTB(resource);
 		sleepTB.setTB(resource);
@@ -62,7 +59,7 @@ public class TKPModel {
 		if ((possition.getmPossRect().contains(x, y))) {
 			switch (currentState) {
 			case Egg:
-				setState(TKPState.Jump);
+				setState(TKPState.Hatch);
 				break;
 			default:
 				setState(TKPState.Thinking);
@@ -134,7 +131,6 @@ public class TKPModel {
 					foodTB.setLastUpdate(gameTime);
 					foodTB.setTB(resource);
 					setState(TKPState.Jump);
-
 				}
 			} else { // if not eating increase the hunger
 				if (gameTime > foodTB.getLastUpdate()
@@ -144,34 +140,59 @@ public class TKPModel {
 															// increase hunger.
 					int amount = (int) ((gameTime - foodTB.getLastUpdate()) / foodTB
 							.getUpdateIntervall()); // amount of cycles that
-													// past since last update
+					// past since last update
 					foodTB.increaseNeedLevel(amount);
 					foodTB.setTB(resource);
 					foodTB.setLastUpdate(gameTime);
 				}
 			}
-			if (false) { // if sleeping decrease the sleepiness
-				
-			} else if (true) { // is not sleeping increase the sleepiness
+			if (currentState == TKPState.Sleep) { // if sleeping decrease the
+													// sleepiness
+				if (sleepTB.getNeedLevel() > 0) {
+					if (gameTime > (sleepTB.getLastUpdate() + sleepTB.getUpdateIntervall())) {
+						int amount = (int) ((gameTime - sleepTB.getLastUpdate()) / sleepTB
+								.getUpdateIntervall());
+						if (amount > 0) {
+							sleepTB.decreaseNeedLevel(amount*3);
+							sleepTB.setLastUpdate(gameTime);
+							sleepTB.setTB(resource);
+						}
+					}
+				} else {
+					sleepTB.setTB(resource);
+					setState(TKPState.Jump);
+				}
+			} else if (currentState != TKPState.Sleep){ // is not sleeping increase the sleepiness
 				if (gameTime > sleepTB.getLastUpdate()
 						+ sleepTB.getUpdateIntervall()) {
-					int amount = (int) ((gameTime - sleepTB.getLastUpdate()) / sleepTB
-							.getUpdateIntervall()); // amount of cycles that
-													// past
-					// since last update
+					// amount of cycles that past since last update
+					int amount = 
+							(int) ((gameTime - sleepTB.getLastUpdate())
+									/ sleepTB.getUpdateIntervall());
 					sleepTB.increaseNeedLevel(amount);
 					sleepTB.setTB(resource);
 				}
 			}
 			if (currentState == TKPState.Jump) {
 				updateTicker++;
-				if (updateTicker == TKPState.Jump.frameCount){
+				if (updateTicker >= TKPState.Jump.frameCount) {
 					updateTicker = 0;
 					setState(TKPState.WalkForward);
 				}
 			} else if (currentState == TKPState.FallAsleep) {
-				
-				
+				updateTicker++;
+				if (updateTicker >= TKPState.FallAsleep.frameCount) {
+					updateTicker = 0;
+					setState(TKPState.Sleep);
+				}
+
+			} else if (currentState == TKPState.Hatch) {
+				updateTicker++;
+				if (updateTicker >= TKPState.Hatch.frameCount) {
+					updateTicker = 0;
+					setState(TKPState.Jump);
+				}
+
 			}
 			// ///////////////////////////////////////////////////////////////
 			// WARARWAW!
@@ -206,8 +227,9 @@ public class TKPModel {
 	}
 
 	public void setSurfaceSize(int width, int height) {
-		this.width = (int) (width);
-		this.height = (int) (height);
+		if (width == 0 && height == 0) {
+			possition.setXYPossition(width/2f, height/2f);
+		}
 		possition.setSurfaceSize(width, height);
 	}
 }

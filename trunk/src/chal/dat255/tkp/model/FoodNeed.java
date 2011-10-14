@@ -9,10 +9,9 @@ import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import chal.dat255.tkp.R;
-import chal.dat255.tkp.model.SleepNeed.SLevel;
 
 public class FoodNeed {
-	private long updateIntervall = 4*100;//0*60; // 4 min
+	private long updateIntervall = 4*1000;
 	
 	public enum FLevel {
 		None (R.drawable.cloudright1),
