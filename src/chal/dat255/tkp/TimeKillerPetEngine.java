@@ -79,7 +79,6 @@ public class TimeKillerPetEngine extends WallpaperService {
 			}
 		}
 
-		// TODO Understand this method to use finding middle
 		@Override
 		public void onSurfaceChanged(SurfaceHolder holder, int format,
 				int width, int height) {
