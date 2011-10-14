@@ -10,7 +10,10 @@ public class TPKMovementModel {
 	//possition of thought bubbles
 	private RectF rightThougtBubble;
 	private RectF leftThougtBubble;
-		
+	
+	// Screen Offsets
+	private float mXOffset = 0, mYOffset = 0, mXStep = 0, mYStep = 0,
+			mXPixels = 0, mYPixels = 0;
 	//Screen size
 	private int width;
 	private int height;
@@ -47,6 +50,19 @@ public class TPKMovementModel {
 		mPossRect.set(mPossRect.left, mCenterY, mPossRect.right, mCenterY + state.height);
 	}
 	
+	public void onOffsetsChanged(float xOffset, float yOffset, float xStep,
+			float yStep, int xPixels, int yPixels) {
+		mXOffset = xOffset;
+		mYOffset = yOffset;
+		mXStep = xStep;
+		mYStep = yStep;
+		mXPixels = xPixels;
+		mYPixels = yPixels;
+		changeXPossition(mXPixels, mXStep); // TODO Panning working,
+		// but bugs when tkp
+		// moving towards
+		// movement direction
+	}
 	
 	//CHANGE possitions
 	public void changeXYPossition(float xChange, float yChange, float xStep, float yStep) {
