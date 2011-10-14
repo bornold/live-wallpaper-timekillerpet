@@ -1,9 +1,13 @@
 package chal.dat255.tkp.model;
 
+import java.util.logging.Level;
+
 import android.content.res.Resources;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import chal.dat255.tkp.Varibles;
+import chal.dat255.tkp.model.FoodNeed.FLevel;
+import chal.dat255.tkp.model.SleepNeed.SLevel;
 import chal.dat255.tkp.view.TKPState;
 import chal.dat255.tkp.view.TKPSpriteView;
 
@@ -62,7 +66,12 @@ public class TKPModel {
 				setState(TKPState.Hatch);
 				break;
 			default:
-				setState(TKPState.Thinking);
+				if ((foodTB.getLevel() != FLevel.None) || (sleepTB.getLevel() != SLevel.None)){
+					setState(TKPState.Thinking);
+				} else {
+					setState(TKPState.Jump);
+				}
+				
 				break;
 			}
 		} else if (currentState == TKPState.Thinking) {
@@ -112,8 +121,12 @@ public class TKPModel {
 	public void draw(Canvas c) {
 		animation.draw(c, possition.getmPossRect());
 		if (currentState == TKPState.Thinking) {
-			foodTB.draw(c, possition.getRightTBPoss());
-			sleepTB.draw(c, possition.getLeftTBPoss());
+			if (foodTB.getLevel() != FLevel.None){
+				foodTB.draw(c, possition.getRightTBPoss());
+			}
+			if (sleepTB.getLevel() != SLevel.None) {
+				sleepTB.draw(c, possition.getLeftTBPoss());	
+			}
 		}
 	}
 

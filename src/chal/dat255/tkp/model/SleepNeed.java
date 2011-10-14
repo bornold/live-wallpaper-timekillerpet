@@ -11,7 +11,7 @@ import android.graphics.RectF;
 import chal.dat255.tkp.R;
 
 public class SleepNeed {
-	final private long updateIntervall = 4*1000; // 4 min
+	final private long updateIntervall = 4*60*1000; // 4 min
 	public enum SLevel {
 		None (R.drawable.cloudleft1),
 		Normal (R.drawable.cloudleft2),
