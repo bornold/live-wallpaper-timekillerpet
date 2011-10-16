@@ -1,6 +1,5 @@
 package chal.dat255.tkp.view;
 
-import chal.dat255.tkp.Varibles;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Rect;
@@ -24,10 +23,6 @@ public class TKPSpriteView {
      */
     private Rect spriteRectangle;
 
-	/**
-     * mFPS is the number of frames we wish to show per second, should be from 3-10
-     */
-    private int mFPS;
     /**
      * mNoOfFrames is simply the number of frames in the sprite sheet we are animating.
      */
@@ -36,10 +31,6 @@ public class TKPSpriteView {
      * mCurrentFrame keep track of the current frame we are rendering so we can move to the next one in order.
      */
     private int mCurrentFrame;
-    /**
-     * mFrameTimer controls how long between frames. 
-     */
-    private long mFrameTimer;
     
     /**
      * mSpriteHeight & mSpriteWidth contain the height and width of an Individual Frame,
@@ -53,7 +44,6 @@ public class TKPSpriteView {
      */
     public TKPSpriteView() {
         spriteRectangle = new Rect(0,0,0,0);
-        mFrameTimer = 0;
         mCurrentFrame = 0;
     }
   
@@ -79,18 +69,12 @@ public class TKPSpriteView {
     /**
      * Updates the class so the next frame is choosen according to fps.
      */
-    public void update(long gameTime) {
-        //This is the code that does the checking.
-        //If the Game time variable is greater than the frametimer 
-        //+ the FPS then what that means is that the amount of time FPS is set to
-        //has elapsed and which case is time to change frames.
-    	if(gameTime > mFrameTimer + Varibles.updateIntervallMillis ) {
-            mFrameTimer = gameTime;
+    public void update() {
+        //Switch frame to next
             mCurrentFrame +=1;
             if(mCurrentFrame >= mNoOfFrames) {
                 mCurrentFrame = 0;
             }
-        }
         //This code makes sure that the source rectangle is showing the right frame.
         //This is updated by multiplying the sprite width by the current frame to get
         //the left most boundary of the frame and adding the sprite width onto this 
@@ -102,11 +86,9 @@ public class TKPSpriteView {
     /**
      * Draws the current sprite on the provided canvas
      * @param canvas the canvas to be drawn upon
-     * @param xPos X position for the left corner
-     * @param yPos Y position for the left corner
+     * @param possRect
      */
-    
-    public void draw(Canvas canvas, RectF poss) {
-        canvas.drawBitmap(mAnimation, spriteRectangle, poss, null);
+    public void draw(Canvas canvas, RectF possRect) {
+        canvas.drawBitmap(mAnimation, spriteRectangle, possRect, null);
     }
 }

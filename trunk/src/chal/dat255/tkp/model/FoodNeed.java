@@ -11,7 +11,7 @@ import android.graphics.RectF;
 import chal.dat255.tkp.R;
 
 public class FoodNeed {
-	private long updateIntervall = 4*1000;
+	final private long updateIntervall = 4*1000; //Four secounds, used for testing, use *60 for minutes
 	
 	public enum FLevel {
 		None (R.drawable.cloudright1),
