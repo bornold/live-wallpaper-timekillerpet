@@ -1,7 +1,6 @@
 package chal.dat255.tkp.view;
 
 import chal.dat255.tkp.R;
-import chal.dat255.tkp.R.drawable;
 
 public enum TKPState {
 	//Thinking (R.drawable.thinking)
@@ -24,10 +23,11 @@ public enum TKPState {
 	public final int width;
 	public final int frameCount;
 	
+	private double modifier = 1.5; //TODO find out how to make it work on without
 	TKPState(int theBitmap, int width, int height, int frameCount) {
 		this.bitmap = theBitmap;
-		this.width = width;
-		this.height = height;
+		this.width = (int)(width*modifier);
+		this.height = (int)(height*modifier);
 		this.frameCount = frameCount;
 	}
 	

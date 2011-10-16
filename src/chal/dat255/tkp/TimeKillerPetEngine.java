@@ -1,6 +1,7 @@
 package chal.dat255.tkp;
 
 import chal.dat255.tkp.model.TKPModel;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.os.Handler;
@@ -43,7 +44,6 @@ public class TimeKillerPetEngine extends WallpaperService {
 		private final Runnable mThread = new Runnable() {
 			public void run() {
 				model.update(System.currentTimeMillis());
-				
 				if (mVisible) {
 					draw();
 				} else {
@@ -137,6 +137,8 @@ public class TimeKillerPetEngine extends WallpaperService {
 				c = holder.lockCanvas();
 				if (c != null) {
 					c.drawColor(Color.WHITE);
+					//TODO Make class for background so it also pan with it.
+					c.drawBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.bg), 0, 0, null);
 					model.draw(c);
 				}
 			} finally {

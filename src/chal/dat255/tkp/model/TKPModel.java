@@ -1,7 +1,5 @@
 package chal.dat255.tkp.model;
 
-import java.util.logging.Level;
-
 import android.content.res.Resources;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -30,7 +28,7 @@ public class TKPModel {
 	// Sprite object
 	private TKPSpriteView animation = new TKPSpriteView();
 
-	// Thougt bubble views /!/!/!/!//!/FIX AS ABSTRACT!!!!!/!/!/!/!//!
+	// Thougt bubble views 
 	private FoodNeed foodTB = new FoodNeed();
 	private SleepNeed sleepTB = new SleepNeed();
 
@@ -61,18 +59,15 @@ public class TKPModel {
 	 */
 	public void isTouched(int x, int y) {
 		if ((possition.getmPossRect().contains(x, y))) {
-			switch (currentState) {
-			case Egg:
+			if (currentState == TKPState.Egg) {
 				setState(TKPState.Hatch);
-				break;
-			default:
-				if ((foodTB.getLevel() != FLevel.None) || (sleepTB.getLevel() != SLevel.None)){
-					setState(TKPState.Thinking);
-				} else {
-					setState(TKPState.Jump);
-				}
-				
-				break;
+			} else if (currentState == TKPState.Thinking){
+				setState(lastState);
+			} else if ((foodTB.getLevel() != FLevel.None) || (sleepTB.getLevel() != SLevel.None)){
+				setState(TKPState.Thinking);
+			} 
+			else {
+				setState(TKPState.Jump);
 			}
 		} else if (currentState == TKPState.Thinking) {
 			if ((possition.getRightTBPoss().contains(x, y))) {
@@ -83,6 +78,7 @@ public class TKPModel {
 				setState(lastState);
 			}
 		} else {
+			possition.goTo(x, y);
 			switch (currentState) {
 			case Jump:
 				setState(TKPState.WalkLeft);
@@ -102,10 +98,6 @@ public class TKPModel {
 
 			case WalkForward:
 				setState(TKPState.WalkLeft);
-				break;
-
-			case Eat:
-				setState(TKPState.Jump);
 				break;
 
 			case FallAsleep:
@@ -131,90 +123,124 @@ public class TKPModel {
 	}
 
 	public void update(long gameTime) {
-		animation.update(gameTime);
+		//Check if amount of time has passed since last update, update interval is 1000 / fps
 		if (gameTime > lastUpdateTimer + Varibles.updateIntervallMillis) {
-			lastUpdateTimer = gameTime;
-
-			// /////// THIS IS UGLY!!!! FIX AS ABSTRACT!
-			if (currentState == TKPState.Eat) { // if eating
-				if (gameTime > (foodTB.getLastUpdate()
-						+ Varibles.updateIntervallMillis
-						* (TKPState.Eat.frameCount) + 1)) {
-					foodTB.decreaseNeedLevel(20);
-					foodTB.setLastUpdate(gameTime);
-					foodTB.setTB(resource);
-					setState(TKPState.Jump);
-				}
-			} else { // if not eating increase the hunger
-				if (gameTime > foodTB.getLastUpdate()
-						+ foodTB.getUpdateIntervall()) { // if not eating and
-															// time past since
-															// last update,
-															// increase hunger.
+			//First updates the animation so the right frame is set for the Androiditchi
+			animation.update();
+			
+			if (currentState != TKPState.Eat) { // if not eating might increase the hunger
+				//Same as above but with hunger
+				if (gameTime > foodTB.getLastUpdate() + foodTB.getUpdateIntervall()) {
+					//Updates it can go long between updates, so we for each update intervall
+					//We take the whole division of the of cycle past since last update
+					// and increase the need
 					int amount = (int) ((gameTime - foodTB.getLastUpdate()) / foodTB
-							.getUpdateIntervall()); // amount of cycles that
-					// past since last update
+							.getUpdateIntervall());
 					foodTB.increaseNeedLevel(amount);
+					//update the sprite
 					foodTB.setTB(resource);
-					foodTB.setLastUpdate(gameTime);
+					//set the new last update time, minus the modolus of the whole division
+					int mod = (int) ((gameTime - foodTB.getLastUpdate()) % foodTB
+							.getUpdateIntervall());
+					foodTB.setLastUpdate(gameTime - mod);
 				}
 			}
-			if (currentState == TKPState.Sleep) { // if sleeping decrease the
-													// sleepiness
+			
+			// if sleeping decrease the sleepiness
+			if (currentState == TKPState.Sleep) { 
+				//If still sleepy decrease sleep
 				if (sleepTB.getNeedLevel() > 0) {
+					//if right time has passed
 					if (gameTime > (sleepTB.getLastUpdate() + sleepTB.getUpdateIntervall())) {
+						//decrease with amount of sleep
 						int amount = (int) ((gameTime - sleepTB.getLastUpdate()) / sleepTB
 								.getUpdateIntervall());
-						if (amount > 0) {
+							// sleep is regenerated 3 times as fast as it is you get sleepy
 							sleepTB.decreaseNeedLevel(amount*3);
-							sleepTB.setLastUpdate(gameTime);
+							//update last update
+							int mod = (int) ((gameTime - sleepTB.getLastUpdate()) % sleepTB
+									.getUpdateIntervall());
+							sleepTB.setLastUpdate(gameTime - mod);
+							// set Sprite
 							sleepTB.setTB(resource);
-						}
 					}
+				// if not sleepy, change state to wake
 				} else {
 					sleepTB.setTB(resource);
 					setState(TKPState.Jump);
 				}
-			} else if (currentState != TKPState.Sleep){ // is not sleeping increase the sleepiness
+			// is not sleeping increase the sleepiness
+			} else if (currentState != TKPState.Sleep) {
+				//if time has passed since last update
 				if (gameTime > sleepTB.getLastUpdate()
 						+ sleepTB.getUpdateIntervall()) {
 					// amount of cycles that past since last update
 					int amount = 
 							(int) ((gameTime - sleepTB.getLastUpdate())
 									/ sleepTB.getUpdateIntervall());
+					//increase sleepiness with amount
 					sleepTB.increaseNeedLevel(amount);
+					//set last update
+					int mod = (int) ((gameTime - sleepTB.getLastUpdate())
+									% sleepTB.getUpdateIntervall());
+					sleepTB.setLastUpdate(gameTime - mod);
+					//update sprite
 					sleepTB.setTB(resource);
 				}
 			}
-			if (currentState == TKPState.Jump) {
+			// Switch case for time limited updates on different states
+			// these state should only go one loop before ending
+			// there for updateTicker tracks how many times they have been
+			// updated.
+			switch (currentState) {
+			case Jump:
 				updateTicker++;
 				if (updateTicker >= TKPState.Jump.frameCount) {
 					updateTicker = 0;
 					setState(TKPState.WalkForward);
 				}
-			} else if (currentState == TKPState.FallAsleep) {
+				break;
+			case FallAsleep:
 				updateTicker++;
 				if (updateTicker >= TKPState.FallAsleep.frameCount) {
 					updateTicker = 0;
 					setState(TKPState.Sleep);
 				}
+				break;
 
-			} else if (currentState == TKPState.Hatch) {
+			case Hatch:
 				updateTicker++;
 				if (updateTicker >= TKPState.Hatch.frameCount) {
 					updateTicker = 0;
 					setState(TKPState.Jump);
 				}
+				break;
 
+			case Eat:
+				updateTicker++;
+				if (updateTicker >= TKPState.Eat.frameCount) {
+					updateTicker = 0;
+					foodTB.decreaseNeedLevel(20);
+					foodTB.setLastUpdate(gameTime);
+					foodTB.setTB(resource);
+					setState(TKPState.Jump);
+				}
+				break;
+
+			default:
+				break;
 			}
-			// ///////////////////////////////////////////////////////////////
-			// WARARWAW!
 
 			// movement updater
+			// can change state by returning something that is not null
+			// it will do so if it cant walk any futher. End of screen.
 			TKPState tempState = possition.updatePossition();
 			if (tempState != null) {
 				setState(tempState);
 			}
+			
+			//Lastly set the last update to new time
+			lastUpdateTimer = gameTime;
 		}
 	}
 
@@ -240,9 +266,6 @@ public class TKPModel {
 	}
 
 	public void setSurfaceSize(int width, int height) {
-		if (width == 0 && height == 0) {
-			possition.setXYPossition(width/2f, height/2f);
-		}
 		possition.setSurfaceSize(width, height);
 	}
 }
