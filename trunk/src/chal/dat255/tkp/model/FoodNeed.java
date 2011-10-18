@@ -9,18 +9,32 @@ import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import chal.dat255.tkp.R;
-
+import chal.dat255.tkp.Varibles;
+/**
+ * Class represented the food need, also contains the sprite Bitmap and a draw method. 
+ * 
+ * @author jonas
+ *
+ */
 public class FoodNeed {
-	final private long updateIntervall = 4*1000; //Four secounds, used for testing, use *60 for minutes
+	final private long updateIntervall = Varibles.hungerUpdateIntervall;
 	
+	/**
+	 * This enum has the integer representation of the bitmap together with the 
+	 * name of each state representation
+	 * @author jonas
+	 *
+	 */
 	public enum FLevel {
 		None (R.drawable.cloudright1),
 		Normal (R.drawable.cloudright2),
 		More (R.drawable.cloudright3),
 		Very (R.drawable.cloudright4), 
 		Critical (R.drawable.cloudright5);
-		
 
+		/**
+		 * Constructor for the enum.  
+		 */
 		public final int bitmap;
 		FLevel(int theBitmap) {
 			this.bitmap = theBitmap;
@@ -31,31 +45,50 @@ public class FoodNeed {
 	 * mAnimation is the variable which will hold the actual bitmap containing the animation.
 	 */
 	private Bitmap bitmap;
+
 	/**
-     * spriteRectangle is the source rectangle variable and 
-     * controls which part of the image we are rendering for each frame. 
-     */
-    private Rect spriteRectangle = new Rect();
+	 * The resource is saved so that new bitmap can be stored
+	 */
+	private Resources resource;
+	
+	/**
+	 * 
+	 * The enum representation of the hunger level.
+	 * Can be None, Normal, More, Very, and Critical
+	 */
+	private FLevel level;
+	/**
+	 * The the need representation, goes from 0 to 100 and is incremented for each updateintervall
+	 */
+	private int needLevel;
+	/**
+	 * The last updated varible is set each time the system has updated the needs. 
+	 */
+	private long lastUpdate;
 
-	FLevel level = FLevel.None;
-	private int needLevel = 0;
-	private long lastUpdate = System.currentTimeMillis(); //should really be set when hatched...
-
-	public FoodNeed() {
+	/**
+	 * Empty Constructor
+	 */
+	public FoodNeed(Resources r) {
+		resource = r;
 		needLevel = 0;
 		level = FLevel.None;
 		lastUpdate = System.currentTimeMillis();
-		spriteRectangle = new Rect();
 	}
 	
-    public void setTB(Resources r){
-    	bitmap = BitmapFactory.decodeResource(r, level.bitmap);
-        spriteRectangle.top = 0;
-        spriteRectangle.bottom = bitmap.getHeight();
-        spriteRectangle.left = 0;
-        spriteRectangle.right = bitmap.getWidth();
+	/**
+	 * setTB sets the bitmap to the right canvas.
+	 * @param r the resource so the bitmap can be constructed.
+	 */
+    private void setTB(){
+    	bitmap = BitmapFactory.decodeResource(resource, level.bitmap);
     }
 
+    /**
+     * Increases the need with a amount, can not be more then 100,
+     * also calls checkNeedLeve to see if the need is to be updated 
+     * @param amount The amount the need should increse
+     */
 	public void increaseNeedLevel(int amount) {
 		if (amount > 0) {
 			if ((amount + needLevel) > 100) {
@@ -67,6 +100,11 @@ public class FoodNeed {
 		}
 	}
 
+	   /**
+     * Decrease the need with a amount, can not be less then 0,
+     * also calls checkNeedLeve to see if the need is to be updated 
+     * @param amount The amount the need should decreased
+     */
 	public void decreaseNeedLevel(int amount) {
 		if (amount > 0) {
 			if ((needLevel - amount) > 0) {
@@ -78,53 +116,79 @@ public class FoodNeed {
 		}
 	}
 
+	/**
+	 * reset the level to 0 calls checkNeedLevel.
+	 */
 	public void resetNeedLevel() {
 		needLevel = 0;
 		checkNeedLevel();
 	}
 	
+	/**
+	 * Return the last update
+	 * @return lastupdate time in millis
+	 */
 	public long getLastUpdate() {
 		return lastUpdate;
 	}
 
+	/**
+	 * Set the last update 
+	 * @param lastUpdate in millisecounds
+	 */
 	public void setLastUpdate(long lastUpdate) {
 		this.lastUpdate = lastUpdate;
 	}
 
-	public long getUpdateIntervall() {
+	
+	/**
+	 * Returns the update interval in millisecound
+	 * @return the update interval in millisecound
+	 */
+	public long getUpdateInterval() {
 		return updateIntervall;
 	}
 
+	/**
+	 * Returns the level of represented by the Enum FLecvel
+	 * @return FLevel enum of the need
+	 */
 	public FLevel getLevel(){
 		return this.level;
 	}
-	
-	private void setLevel(FLevel level) {
-		this.level = level;
+	/**
+	 * Returns the need level in integer 
+	 * @return need level, is between 0 and 100
+	 */
+	public int getNeedLevel() {
+		return this.needLevel;
 	}
 	
+	/**
+	 * Private method to update Level according what NeedLevel is at
+	 */
 	private void checkNeedLevel() {
 		if (needLevel > 80) {
-			setLevel(FLevel.Critical);
+			this.level =(FLevel.Critical);
 		} else if ( needLevel > 60 ) {
-			setLevel(FLevel.Very);
+			this.level =(FLevel.Very);
 		} else if ( needLevel > 40 ) {
-			setLevel(FLevel.More);
-		}  else if ( needLevel > 20 ) {
-			setLevel(FLevel.Normal);
+			this.level =(FLevel.More);
+		}  else if ( needLevel > 10 ) {
+			this.level =(FLevel.Normal);
 		}  else {
-			setLevel(FLevel.None);
+			this.level =(FLevel.None);
 		}
+		setTB();
 	}
 	
     /**
      * Draws the sprite on the provided canvas
      * @param canvas the canvas to be drawn upon
-     * @param xPos X position for the left corner
-     * @param yPos Y position for the left corner
+     * @param poss the position rectangle of where the bitmap should be printed
      */
     public void draw(Canvas canvas, RectF poss) {
-        canvas.drawBitmap(bitmap, spriteRectangle, poss, null);
+        canvas.drawBitmap(bitmap, null, poss, null);
     }
 }
 

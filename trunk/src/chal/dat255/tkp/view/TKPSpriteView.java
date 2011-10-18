@@ -4,11 +4,16 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.RectF;
-/**
+/*
  * Thanks to Stephen Flockton, Toxic Tower Studios
  * for providing a guide on sprites without xml use!
  * @link http://www.droidnova.com/2d-sprite-animation-in-android,471.html
  * @author Jonas Bornold
+ *
+ */
+/**
+ * 
+ * @author jonas
  *
  */
 public class TKPSpriteView {
@@ -49,11 +54,10 @@ public class TKPSpriteView {
   
 
 	/**
-     * Initialize function works almost as a constructor and sets the varibles.
+     * Initialize function works almost as a constructor and sets the variables.
      * @param theBitmap actual bitmap containing the animation.
      * @param Height contain the height and width of an Individual Frame 
      * @param Width contain the width and width of an Individual Frame
-     * @param theFPS the number of frames we wish to show per second, should be from 3-10 (no need to put ms, just s)
      * @param theFrameCount keep track of the current frame we are rendering so we can move to the next one in order
      */
     public void initialize(Bitmap theBitmap, int Height, int Width, int theFrameCount) {
@@ -65,9 +69,10 @@ public class TKPSpriteView {
         spriteRectangle.left = 0;
         spriteRectangle.right = mSpriteWidth;
         mNoOfFrames = theFrameCount;
+        mCurrentFrame = 0;
     }
     /**
-     * Updates the class so the next frame is choosen according to fps.
+     * Updates the class so the next frame is chosen.
      */
     public void update() {
         //Switch frame to next
@@ -86,7 +91,7 @@ public class TKPSpriteView {
     /**
      * Draws the current sprite on the provided canvas
      * @param canvas the canvas to be drawn upon
-     * @param possRect
+     * @param possRect What position the sprite should be drawn on.
      */
     public void draw(Canvas canvas, RectF possRect) {
         canvas.drawBitmap(mAnimation, spriteRectangle, possRect, null);
